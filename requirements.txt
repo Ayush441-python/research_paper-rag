@@ -1,0 +1,10 @@
+langchain
+langchain-groq
+langgraph
+langchain-community
+langchain-redis
+langchain_huggingface
+
+
+pypdf
+dotenv
