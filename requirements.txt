@@ -4,8 +4,12 @@ langgraph
 langchain-community
 langchain-redis
 langchain_huggingface
-
+langsmith
 
 pypdf
 dotenv
 sentence-transformers
+
+
+fastapi
+pydantic
