@@ -3,7 +3,9 @@ from ingestion.splitter import docs_splitter
 from vectorstore.redis import create_vectorstore
 from embedding.model import get_embedding
 from retriever.mqr import create_mqr
+from llm.chain import get_chain
 
+from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
 
 from dotenv import load_dotenv
 
@@ -15,14 +17,20 @@ chunks= docs_splitter(docs)
 embedded = get_embedding()
 vector = create_vectorstore(chunks, embedded)
 mqr = create_mqr(vector)
+chain = get_chain()
 
 
 
+ques = input("Enter your query here: ")
 
-query = input("Enter your query here: ")
+retrieved_docs = mqr.invoke(ques)
 
-retrieve_docs = mqr.invoke(query)
+context = "\n\n".join(
+    doc.page_content
+    for doc in retrieved_docs
+)
 
-for i, doc in enumerate(retrieve_docs):
-    print(f"\n--- Document {i+1} ---\n\n\n")
-    print(doc.page_content)
+output = chain.invoke({"question":ques,"context":context})
+
+
+print(output)
