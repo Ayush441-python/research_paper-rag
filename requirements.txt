@@ -9,7 +9,7 @@ langsmith
 pypdf
 dotenv
 sentence-transformers
-
+rank_bm25
 
 fastapi
 uvicorn

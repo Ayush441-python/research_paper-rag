@@ -1,36 +1,58 @@
-from ingestion.loader import load_pdf
-from ingestion.splitter import docs_splitter
-from vectorstore.redis import create_vectorstore
-from embedding.model import get_embedding
-from retriever.mqr import create_mqr
-from llm.chain import get_chain
-
-from langchain_core.runnables import RunnableLambda, RunnableParallel, RunnablePassthrough
-
-from dotenv import load_dotenv
-
-
-load_dotenv()
-
-docs= load_pdf("./data/attention_is_all_you_need.pdf")
-chunks= docs_splitter(docs)
-embedded = get_embedding()
-vector = create_vectorstore(chunks, embedded)
-mqr = create_mqr(vector)
-chain = get_chain()
+from fastapi import FastAPI
 
 
 
-ques = input("Enter your query here: ")
+from apis import health
+from apis import upload
+from apis import ingestion
+from apis import retriever
+from apis import chat
 
-retrieved_docs = mqr.invoke(ques)
 
-context = "\n\n".join(
-    doc.page_content
-    for doc in retrieved_docs
+app = FastAPI(
+    title="Research RAG API",
+    description="Production-ready Retrieval-Augmented Generation API",
+    version="1.0.0"
 )
 
-output = chain.invoke({"question":ques,"context":context})
+
+app.include_router(
+    health.router,
+    prefix="/api")
+
+app.include_router(
+    upload.router,
+    prefix="/api")
+
+app.include_router(
+    ingestion.router,
+    prefix="/api")
+
+app.include_router(
+    retriever.router,
+    prefix="/api"
+)
+
+app.include_router(
+    chat.router,
+    prefix="/api"
+)
 
 
-print(output)
+@app.get("/")
+def root():
+    return {
+        "message": "Research RAG API is running",
+        "version": "1.0.0",
+        "docs": "/docs"
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "app:app",
+        host="0.0.0.0",
+        port=8000,
+        reload=True
+    )
