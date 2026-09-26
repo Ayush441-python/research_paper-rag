@@ -1,11 +1,8 @@
 from langchain_redis import RedisVectorStore
 import os
 
-## docker run -d --name redis-rag -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
-
 
 def create_vectorstore(documents, embeddings):
-
     vector_store = RedisVectorStore.from_documents(
         documents=documents,
         embedding=embeddings,
@@ -13,4 +10,14 @@ def create_vectorstore(documents, embeddings):
         index_name="pdf_rag"
     )
 
-    return vector_store   
+    return vector_store
+
+
+def get_vectorstore(embeddings):
+    vector_store = RedisVectorStore(
+        embeddings=embeddings,
+        redis_url=os.getenv("REDIS_URL"),
+        index_name="pdf_rag"
+    )
+
+    return vector_store
