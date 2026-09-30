@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 
-from ingestion.loader import load_pdf
-from ingestion.splitter import docs_splitter
+from src.ingestion.loader import load_pdf
+from src.ingestion.splitter import docs_splitter
 
 router = APIRouter()
 

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from embedding.model import get_embedding
-from vectorstore.redis import create_vectorstore
-from retriever.mqr import create_mqr
-from retriever.keyword import create_keyword_retriever
-from retriever.hybrid import create_hybrid_retriever
+from src.apis.embedding.model import get_embedding
+from src.vectorstore.redis import create_vectorstore
+from src.retriever.mqr import create_mqr
+from src.retriever.keyword import create_keyword_retriever
+from src.retriever.hybrid import create_hybrid_retriever
 
 
 router = APIRouter()

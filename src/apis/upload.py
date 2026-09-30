@@ -3,7 +3,7 @@ import shutil
 from fastapi import APIRouter, UploadFile, File, HTTPException
 
 
-from ingestion.loader import load_pdf
+from src.ingestion.loader import load_pdf
 
 router = APIRouter()
 

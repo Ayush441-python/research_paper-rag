@@ -1,5 +1,5 @@
 from langchain_classic.retrievers.multi_query import MultiQueryRetriever
-from llm.llm import get_llm
+from src.llm.llm import get_llm
 
 
 def create_mqr(vectorstore, k=5):

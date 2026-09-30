@@ -2,11 +2,11 @@ from fastapi import FastAPI
 
 
 
-from apis import health
-from apis import upload
-from apis import ingestion
-from apis import retriever
-from apis import chat
+from src.apis import health
+from src.apis import upload
+from src import ingestion
+from src.apis import retriever
+from src.apis import chat
 
 
 app = FastAPI(

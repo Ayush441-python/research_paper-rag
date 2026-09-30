@@ -1,5 +1,5 @@
-from llm.llm import get_llm
-from llm.prompt import get_prompt
+from src.llm.llm import get_llm
+from src.llm.prompt import get_prompt
 from langchain_core.output_parsers import StrOutputParser
 
 llm = get_llm()
