@@ -15,7 +15,6 @@ class RetrieverRequest(BaseModel):
     query: str
     k: int = 5
 
-
 @router.post("/retrieve")
 def retrieve_documents(request: RetrieverRequest):
 

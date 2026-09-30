@@ -6,3 +6,18 @@ def load_pdf(file):
     loader = PyPDFLoader(file)
     doc = loader.load()
     return doc
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
