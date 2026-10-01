@@ -11,6 +11,7 @@ dotenv
 sentence-transformers
 rank_bm25
 
+deepeval
 fastapi
 uvicorn
 pydantic

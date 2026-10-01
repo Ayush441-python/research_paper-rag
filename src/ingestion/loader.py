@@ -8,16 +8,3 @@ def load_pdf(file):
     return doc
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-

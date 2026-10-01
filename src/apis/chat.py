@@ -3,7 +3,7 @@ from pydantic import BaseModel
 
 from src.retriever.mqr import create_mqr
 from src.vectorstore.redis import create_vectorstore
-from src.apis.embedding.model import get_embedding
+from embedding.model import get_embedding
 from src.llm.chain import get_chain
 
 router = APIRouter()

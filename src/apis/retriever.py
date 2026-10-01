@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from src.apis.embedding.model import get_embedding
+from embedding.model import get_embedding
 from src.vectorstore.redis import create_vectorstore
 from src.retriever.mqr import create_mqr
 from src.retriever.keyword import create_keyword_retriever
