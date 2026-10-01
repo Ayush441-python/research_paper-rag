@@ -1,30 +1,40 @@
 import os
+import sys
 import json
+
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+if hasattr(sys.stderr, "reconfigure"):
+    sys.stderr.reconfigure(encoding="utf-8")
 
 from dotenv import load_dotenv
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
-from deepeval.metrics import AnswerRelevancyMetric
+from deepeval.metrics import (
+    ContextualRelevancyMetric,
+    ContextualPrecisionMetric,
+    ContextualRecallMetric,
+)
 
 from evals.groq_model import GroqModel
-from src.retriever.pipeline import create_retriever
+from src.retriever.eval_pipeline import create_eval_retriever
 
 load_dotenv()
 
 GOLDEN_PATH = "goldens/retriever_dataset.json"
 THRESHOLD = 0.7
 
-with open(GOLDEN_PATH,"r",encoding="utf-8") as f:
+with open(GOLDEN_PATH, "r", encoding="utf-8") as f:
     dataset = json.load(f)
 
-retriever = create_retriever(k=5)
+retriever = create_eval_retriever(k=5)
 
-model = GroqModel(os.getenv("EVALS_MODEL"))
+model_name = os.getenv("EVALS_MODEL", "openai/gpt-oss-20b")
+model = GroqModel(model_name)
 
 test_cases = []
 
-for g in dataset["data"]:
-
+for g in dataset["data"][:3]:
     question = g["question"]
     ideal_answer = g["ideal_answer"]
 
@@ -47,12 +57,22 @@ for g in dataset["data"]:
     test_cases.append(test_case)
 
 
-metric = AnswerRelevancyMetric(
+relevancy_metric = ContextualRelevancyMetric(
     threshold=THRESHOLD,
-    model = model
+    model=model
+)
+
+precision_metric = ContextualPrecisionMetric(
+    threshold=THRESHOLD,
+    model=model
+)
+
+recall_metric = ContextualRecallMetric(
+    threshold=THRESHOLD,
+    model=model
 )
 
 evaluate(
     test_cases=test_cases,
-    metrics=[metric]
-)
+    metrics=[relevancy_metric, precision_metric, recall_metric]
+)
