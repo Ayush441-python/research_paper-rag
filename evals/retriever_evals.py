@@ -29,12 +29,12 @@ with open(GOLDEN_PATH, "r", encoding="utf-8") as f:
 
 retriever = create_eval_retriever(k=5)
 
-model_name = os.getenv("EVALS_MODEL", "openai/gpt-oss-20b")
+model_name = os.getenv("EVALS_MODEL", "openai/gpt-oss-120b")
 model = GroqModel(model_name)
 
 test_cases = []
 
-for g in dataset["data"][:3]:
+for g in dataset["data"]:
     question = g["question"]
     ideal_answer = g["ideal_answer"]
 
@@ -59,20 +59,26 @@ for g in dataset["data"][:3]:
 
 relevancy_metric = ContextualRelevancyMetric(
     threshold=THRESHOLD,
-    model=model
+    model=model,
+    async_mode=True
 )
 
 precision_metric = ContextualPrecisionMetric(
     threshold=THRESHOLD,
-    model=model
+    model=model,
+    async_mode=False
 )
 
 recall_metric = ContextualRecallMetric(
     threshold=THRESHOLD,
-    model=model
+    model=model,
+    async_mode=False
 )
+
+from deepeval.evaluate.configs import AsyncConfig
 
 evaluate(
     test_cases=test_cases,
-    metrics=[relevancy_metric, precision_metric, recall_metric]
-)
+    metrics=[relevancy_metric, precision_metric, recall_metric],
+    async_config=AsyncConfig(run_async=False)
+)

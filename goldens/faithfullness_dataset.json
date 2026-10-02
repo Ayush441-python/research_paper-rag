@@ -1,0 +1,1118 @@
+[
+  {
+    "id": "p001_faithful",
+    "source_id": "p001",
+    "query": "How is the Transformer encoder structured?",
+    "context": [
+      "The encoder is a stack of N = 6 identical layers. Every layer contains two sub-layers: a multi-head self-attention mechanism, and a simple position-wise fully connected feed-forward network. A residual connection wraps each of the two sub-layers and is followed by layer normalization, so each sub-layer outputs LayerNorm(x + Sublayer(x)). To make the residual connections possible, every sub-layer and the embedding layers produce outputs of dimension d_model = 512."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The encoder is a stack of 6 identical layers. Each layer has a multi-head self-attention sub-layer and a position-wise feed-forward sub-layer, each wrapped in a residual connection followed by layer normalization, computed as LayerNorm(x + Sublayer(x)). All sub-layers and embeddings output 512-dimensional vectors.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "easy",
+    "claims": [
+      {
+        "claim": "The encoder has 6 identical layers",
+        "supported": true
+      },
+      {
+        "claim": "Each layer has multi-head self-attention and a position-wise feed-forward sub-layer",
+        "supported": true
+      },
+      {
+        "claim": "Residual connection plus layer normalization wraps each sub-layer",
+        "supported": true
+      },
+      {
+        "claim": "All outputs have dimension 512",
+        "supported": true
+      }
+    ],
+    "explanation": "Restates the stack depth, sub-layers, residual/normalization scheme and d_model from the context.",
+    "source": {
+      "section": "3.1 Encoder and Decoder Stacks",
+      "page": 3
+    }
+  },
+  {
+    "id": "p001_unfaithful",
+    "source_id": "p001",
+    "query": "How is the Transformer encoder structured?",
+    "context": [
+      "The encoder is a stack of N = 6 identical layers. Every layer contains two sub-layers: a multi-head self-attention mechanism, and a simple position-wise fully connected feed-forward network. A residual connection wraps each of the two sub-layers and is followed by layer normalization, so each sub-layer outputs LayerNorm(x + Sublayer(x)). To make the residual connections possible, every sub-layer and the embedding layers produce outputs of dimension d_model = 512."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The encoder is a stack of 12 identical layers, each with three sub-layers: self-attention, encoder-decoder attention and a feed-forward network. Outputs have dimension 1024, and layer normalization is applied before each sub-layer without any residual connection.",
+    "label": "unfaithful",
+    "response_type": "contradiction",
+    "difficulty": "easy",
+    "claims": [
+      {
+        "claim": "The encoder has 12 layers",
+        "supported": false
+      },
+      {
+        "claim": "Each encoder layer has three sub-layers including encoder-decoder attention",
+        "supported": false
+      },
+      {
+        "claim": "Outputs have dimension 1024",
+        "supported": false
+      },
+      {
+        "claim": "There is no residual connection",
+        "supported": false
+      }
+    ],
+    "explanation": "The context gives 6 layers, two sub-layers, d_model = 512 and residual connections; encoder-decoder attention belongs to the decoder.",
+    "source": {
+      "section": "3.1 Encoder and Decoder Stacks",
+      "page": 3
+    }
+  },
+  {
+    "id": "p002_faithful",
+    "source_id": "p002",
+    "query": "How does the decoder differ from the encoder, and how does it avoid looking at future tokens?",
+    "context": [
+      "The decoder is also a stack of N = 6 identical layers. Besides the two sub-layers found in each encoder layer, it adds a third sub-layer that performs multi-head attention over the output of the encoder stack. The self-attention sub-layer in the decoder is modified so that positions cannot attend to later positions. This masking, together with the fact that the output embeddings are shifted by one position, means the prediction for position i can depend only on known outputs at positions before i. The masking is implemented inside scaled dot-product attention by setting to negative infinity all softmax inputs that correspond to illegal connections."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The decoder also has 6 identical layers but adds a third sub-layer that does multi-head attention over the encoder output. Its self-attention is masked, and together with the one-position shift of the output embeddings this makes the prediction for position i depend only on earlier positions. The masking sets illegal softmax inputs to negative infinity.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "The decoder has 6 layers and a third sub-layer attending over the encoder output",
+        "supported": true
+      },
+      {
+        "claim": "Decoder self-attention is masked to block later positions",
+        "supported": true
+      },
+      {
+        "claim": "Output embeddings are shifted by one position",
+        "supported": true
+      },
+      {
+        "claim": "Masking sets illegal softmax inputs to negative infinity",
+        "supported": true
+      }
+    ],
+    "explanation": "Every statement matches the decoder description and masking mechanism.",
+    "source": {
+      "section": "3.1 and 3.2.3",
+      "page": 3
+    }
+  },
+  {
+    "id": "p002_unfaithful",
+    "source_id": "p002",
+    "query": "How does the decoder differ from the encoder, and how does it avoid looking at future tokens?",
+    "context": [
+      "The decoder is also a stack of N = 6 identical layers. Besides the two sub-layers found in each encoder layer, it adds a third sub-layer that performs multi-head attention over the output of the encoder stack. The self-attention sub-layer in the decoder is modified so that positions cannot attend to later positions. This masking, together with the fact that the output embeddings are shifted by one position, means the prediction for position i can depend only on known outputs at positions before i. The masking is implemented inside scaled dot-product attention by setting to negative infinity all softmax inputs that correspond to illegal connections."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The decoder has 6 layers and lets every position attend to all other positions in both directions, like the encoder. Future tokens are hidden by zeroing out their embeddings before the first layer, so no masking is needed inside the attention function.",
+    "label": "unfaithful",
+    "response_type": "contradiction_and_fabrication",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "The decoder has 6 layers",
+        "supported": true
+      },
+      {
+        "claim": "Decoder positions attend bidirectionally to all positions",
+        "supported": false
+      },
+      {
+        "claim": "Future tokens are hidden by zeroing their embeddings",
+        "supported": false
+      },
+      {
+        "claim": "No masking is needed in attention",
+        "supported": false
+      }
+    ],
+    "explanation": "The context says decoder self-attention is masked via negative-infinity softmax inputs; zeroing embeddings is never mentioned.",
+    "source": {
+      "section": "3.1 and 3.2.3",
+      "page": 3
+    }
+  },
+  {
+    "id": "p003_faithful",
+    "source_id": "p003",
+    "query": "Why are the dot products in attention scaled by the square root of d_k?",
+    "context": [
+      "Attention computes dot products of the query with all keys, divides each by the square root of d_k, and applies softmax to get weights on the values. The two common attention functions are additive and dot-product attention; dot-product attention is faster and more space-efficient in practice because it uses optimized matrix multiplication. For small d_k the two perform similarly, but additive attention beats unscaled dot-product attention at larger d_k. The authors suspect that for large d_k the dot products grow large in magnitude, pushing softmax into regions with extremely small gradients, and scaling counteracts this. A footnote notes that if the components of q and k are independent random variables with mean 0 and variance 1, their dot product has mean 0 and variance d_k."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The scaling counteracts a problem at large d_k: dot products grow large in magnitude, which pushes the softmax into regions with extremely small gradients. If query and key components are independent with mean 0 and variance 1, the dot product has variance d_k. Without scaling, additive attention outperforms dot-product attention at larger d_k.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Large d_k makes dot products large in magnitude",
+        "supported": true
+      },
+      {
+        "claim": "Large values push softmax into regions with tiny gradients",
+        "supported": true
+      },
+      {
+        "claim": "Dot product variance is d_k under the stated assumptions",
+        "supported": true
+      },
+      {
+        "claim": "Unscaled dot-product attention is outperformed by additive attention at larger d_k",
+        "supported": true
+      }
+    ],
+    "explanation": "All points come from the attention description and footnote.",
+    "source": {
+      "section": "3.2.1 and footnote 4",
+      "page": 4
+    }
+  },
+  {
+    "id": "p003_unfaithful",
+    "source_id": "p003",
+    "query": "Why are the dot products in attention scaled by the square root of d_k?",
+    "context": [
+      "Attention computes dot products of the query with all keys, divides each by the square root of d_k, and applies softmax to get weights on the values. The two common attention functions are additive and dot-product attention; dot-product attention is faster and more space-efficient in practice because it uses optimized matrix multiplication. For small d_k the two perform similarly, but additive attention beats unscaled dot-product attention at larger d_k. The authors suspect that for large d_k the dot products grow large in magnitude, pushing softmax into regions with extremely small gradients, and scaling counteracts this. A footnote notes that if the components of q and k are independent random variables with mean 0 and variance 1, their dot product has mean 0 and variance d_k."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The scaling reduces the compute cost of the matrix multiplication, making dot-product attention faster than additive attention. The dot product has variance 1 regardless of d_k, so the scale mainly keeps memory usage low.",
+    "label": "unfaithful",
+    "response_type": "contradiction_and_fabrication",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Scaling reduces matrix multiplication compute cost",
+        "supported": false
+      },
+      {
+        "claim": "The dot product has variance 1 regardless of d_k",
+        "supported": false
+      },
+      {
+        "claim": "The scaling mainly keeps memory usage low",
+        "supported": false
+      }
+    ],
+    "explanation": "The context attributes the scaling to softmax saturation and small gradients, and says the variance is d_k.",
+    "source": {
+      "section": "3.2.1 and footnote 4",
+      "page": 4
+    }
+  },
+  {
+    "id": "p004_faithful",
+    "source_id": "p004",
+    "query": "How does multi-head attention work and what settings does the base model use?",
+    "context": [
+      "Instead of one attention function over d_model-dimensional queries, keys and values, the authors linearly project them h times with different learned projections to d_k, d_k and d_v dimensions. Attention is applied in parallel to each projected version, producing d_v-dimensional outputs that are concatenated and projected once more. Multi-head attention lets the model jointly attend to information from different representation subspaces at different positions, which a single head cannot do because averaging inhibits it. The work uses h = 8 heads with d_k = d_v = d_model / h = 64, so total computational cost is similar to single-head attention at full dimensionality."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Queries, keys and values are projected h times with different learned linear projections, attention runs in parallel on each, and the outputs are concatenated and projected again. The base model uses 8 heads with d_k = d_v = 64, so total cost is similar to single-head attention at full dimension. Multiple heads let the model attend to different representation subspaces at different positions.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "easy",
+    "claims": [
+      {
+        "claim": "Inputs are projected h times with different learned projections",
+        "supported": true
+      },
+      {
+        "claim": "Head outputs are concatenated and projected again",
+        "supported": true
+      },
+      {
+        "claim": "The base model uses 8 heads with d_k = d_v = 64",
+        "supported": true
+      },
+      {
+        "claim": "Heads attend to different representation subspaces at different positions",
+        "supported": true
+      }
+    ],
+    "explanation": "Faithful to the multi-head description.",
+    "source": {
+      "section": "3.2.2 Multi-Head Attention",
+      "page": 4
+    }
+  },
+  {
+    "id": "p004_unfaithful",
+    "source_id": "p004",
+    "query": "How does multi-head attention work and what settings does the base model use?",
+    "context": [
+      "Instead of one attention function over d_model-dimensional queries, keys and values, the authors linearly project them h times with different learned projections to d_k, d_k and d_v dimensions. Attention is applied in parallel to each projected version, producing d_v-dimensional outputs that are concatenated and projected once more. Multi-head attention lets the model jointly attend to information from different representation subspaces at different positions, which a single head cannot do because averaging inhibits it. The work uses h = 8 heads with d_k = d_v = d_model / h = 64, so total computational cost is similar to single-head attention at full dimensionality."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The base model uses 8 heads, each with dimension 128, and all heads share one set of projection matrices. Running 8 heads makes the total computational cost about eight times that of a single head.",
+    "label": "unfaithful",
+    "response_type": "numeric_error_and_contradiction",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "The base model uses 8 heads",
+        "supported": true
+      },
+      {
+        "claim": "Each head has dimension 128",
+        "supported": false
+      },
+      {
+        "claim": "Heads share one set of projection matrices",
+        "supported": false
+      },
+      {
+        "claim": "Total cost is about eight times a single head",
+        "supported": false
+      }
+    ],
+    "explanation": "Per-head dimension is 64, projections are different and learned per head, and total cost is similar to single-head attention.",
+    "source": {
+      "section": "3.2.2 Multi-Head Attention",
+      "page": 4
+    }
+  },
+  {
+    "id": "p005_faithful",
+    "source_id": "p005",
+    "query": "How does the Transformer represent token order, and why were sinusoidal encodings chosen?",
+    "context": [
+      "Since the model has neither recurrence nor convolution, information about token positions must be injected. Positional encodings of dimension d_model are added to the input embeddings at the bottoms of the encoder and decoder stacks. The encodings use sine and cosine functions of different frequencies: even dimensions use sin(pos / 10000^(2i/d_model)) and odd dimensions use the matching cosine, giving wavelengths in a geometric progression from 2π to 10000·2π. The authors hypothesized this would make it easy to attend by relative position, since for any fixed offset k, PE(pos+k) is a linear function of PE(pos). They also tried learned positional embeddings and found nearly identical results, choosing sinusoids because they may allow extrapolation to longer sequences than seen in training."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Positional encodings with the same dimension as the embeddings are added to the inputs at the bottom of both stacks. They are sine and cosine functions of different frequencies with wavelengths from 2π to 10000·2π. The authors chose them because they might make relative-position attention easy (PE(pos+k) is linear in PE(pos)) and may extrapolate to longer sequences; learned embeddings gave nearly identical results.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Positional encodings are added to the input embeddings at the bottom of both stacks",
+        "supported": true
+      },
+      {
+        "claim": "They use sines and cosines with wavelengths from 2π to 10000·2π",
+        "supported": true
+      },
+      {
+        "claim": "PE(pos+k) is a linear function of PE(pos), easing relative-position attention",
+        "supported": true
+      },
+      {
+        "claim": "Learned embeddings gave nearly identical results",
+        "supported": true
+      }
+    ],
+    "explanation": "All claims follow the context.",
+    "source": {
+      "section": "3.5 Positional Encoding / 6.2 row (E)",
+      "page": 6
+    }
+  },
+  {
+    "id": "p005_unfaithful",
+    "source_id": "p005",
+    "query": "How does the Transformer represent token order, and why were sinusoidal encodings chosen?",
+    "context": [
+      "Since the model has neither recurrence nor convolution, information about token positions must be injected. Positional encodings of dimension d_model are added to the input embeddings at the bottoms of the encoder and decoder stacks. The encodings use sine and cosine functions of different frequencies: even dimensions use sin(pos / 10000^(2i/d_model)) and odd dimensions use the matching cosine, giving wavelengths in a geometric progression from 2π to 10000·2π. The authors hypothesized this would make it easy to attend by relative position, since for any fixed offset k, PE(pos+k) is a linear function of PE(pos). They also tried learned positional embeddings and found nearly identical results, choosing sinusoids because they may allow extrapolation to longer sequences than seen in training."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Positional encodings are concatenated to the embeddings rather than added. Learned positional embeddings performed significantly worse in experiments, so the authors adopted the sinusoidal version.",
+    "label": "unfaithful",
+    "response_type": "contradiction",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Positional encodings are concatenated to embeddings",
+        "supported": false
+      },
+      {
+        "claim": "Learned embeddings performed significantly worse",
+        "supported": false
+      }
+    ],
+    "explanation": "The context says the encodings are summed with the embeddings and that learned embeddings gave nearly identical results; sinusoids were chosen for possible extrapolation.",
+    "source": {
+      "section": "3.5 Positional Encoding / 6.2 row (E)",
+      "page": 6
+    }
+  },
+  {
+    "id": "p006_faithful",
+    "source_id": "p006",
+    "query": "How do self-attention, recurrent and convolutional layers compare in complexity and path length?",
+    "context": [
+      "Table 1 compares layer types by complexity per layer, minimum sequential operations and maximum path length, with n the sequence length, d the representation dimension, k the kernel size and r the neighborhood size. Self-attention: O(n^2 · d), O(1) sequential operations, O(1) path length. Recurrent: O(n · d^2), O(n), O(n). Convolutional: O(k · n · d^2), O(1), O(log_k(n)). Restricted self-attention: O(r · n · d), O(1), O(n/r). Self-attention layers are faster than recurrent layers when the sequence length n is smaller than the representation dimension d, which is most often the case for word-piece and byte-pair representations."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Self-attention costs O(n^2 · d) per layer with O(1) sequential operations and O(1) path length. Recurrent layers cost O(n · d^2) with O(n) sequential operations and O(n) path length. Convolutional layers cost O(k · n · d^2) with O(log_k(n)) path length. Self-attention is faster than recurrence when n is smaller than d.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Self-attention: O(n^2 · d), O(1) sequential, O(1) path length",
+        "supported": true
+      },
+      {
+        "claim": "Recurrent: O(n · d^2), O(n) sequential, O(n) path length",
+        "supported": true
+      },
+      {
+        "claim": "Convolutional: O(k · n · d^2) with O(log_k(n)) path length",
+        "supported": true
+      },
+      {
+        "claim": "Self-attention is faster than recurrent when n < d",
+        "supported": true
+      }
+    ],
+    "explanation": "Matches Table 1 and the accompanying discussion.",
+    "source": {
+      "section": "Table 1 / 4 Why Self-Attention",
+      "page": 6
+    }
+  },
+  {
+    "id": "p006_unfaithful",
+    "source_id": "p006",
+    "query": "How do self-attention, recurrent and convolutional layers compare in complexity and path length?",
+    "context": [
+      "Table 1 compares layer types by complexity per layer, minimum sequential operations and maximum path length, with n the sequence length, d the representation dimension, k the kernel size and r the neighborhood size. Self-attention: O(n^2 · d), O(1) sequential operations, O(1) path length. Recurrent: O(n · d^2), O(n), O(n). Convolutional: O(k · n · d^2), O(1), O(log_k(n)). Restricted self-attention: O(r · n · d), O(1), O(n/r). Self-attention layers are faster than recurrent layers when the sequence length n is smaller than the representation dimension d, which is most often the case for word-piece and byte-pair representations."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Self-attention costs O(n · d^2) per layer and needs O(n) sequential operations, while recurrent layers need only O(1) sequential operations. Self-attention is always faster than recurrent layers, whatever the sequence length.",
+    "label": "unfaithful",
+    "response_type": "swapped_roles_and_contradiction",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Self-attention costs O(n · d^2) with O(n) sequential operations",
+        "supported": false
+      },
+      {
+        "claim": "Recurrent layers need only O(1) sequential operations",
+        "supported": false
+      },
+      {
+        "claim": "Self-attention is always faster than recurrent layers",
+        "supported": false
+      }
+    ],
+    "explanation": "The complexities are swapped between the two layer types, and the speed advantage holds only when n < d.",
+    "source": {
+      "section": "Table 1 / 4 Why Self-Attention",
+      "page": 6
+    }
+  },
+  {
+    "id": "p007_faithful",
+    "source_id": "p007",
+    "query": "What hardware, schedule and optimizer were used to train the models?",
+    "context": [
+      "Models were trained on one machine with 8 NVIDIA P100 GPUs. Base models, using the hyperparameters described in the paper, took about 0.4 seconds per step and were trained for 100,000 steps, roughly 12 hours. Big models took 1.0 second per step and were trained for 300,000 steps, about 3.5 days. Optimization used Adam with beta1 = 0.9, beta2 = 0.98 and epsilon = 1e-9. The learning rate increases linearly over the first warmup_steps training steps and then decreases proportionally to the inverse square root of the step number, with warmup_steps = 4000."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Training used one machine with 8 P100 GPUs. The base model took about 0.4 s per step for 100,000 steps (about 12 hours); the big model took 1.0 s per step for 300,000 steps (about 3.5 days). The optimizer was Adam (beta1 0.9, beta2 0.98, epsilon 1e-9) with linear warmup for 4000 steps followed by inverse-square-root decay.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Training used 8 P100 GPUs on one machine",
+        "supported": true
+      },
+      {
+        "claim": "Base: 0.4 s/step, 100,000 steps, about 12 hours",
+        "supported": true
+      },
+      {
+        "claim": "Big: 1.0 s/step, 300,000 steps, about 3.5 days",
+        "supported": true
+      },
+      {
+        "claim": "Adam with warmup of 4000 steps then inverse-square-root decay",
+        "supported": true
+      }
+    ],
+    "explanation": "All numbers match the context.",
+    "source": {
+      "section": "5.2 Hardware and Schedule / 5.3 Optimizer",
+      "page": 7
+    }
+  },
+  {
+    "id": "p007_unfaithful",
+    "source_id": "p007",
+    "query": "What hardware, schedule and optimizer were used to train the models?",
+    "context": [
+      "Models were trained on one machine with 8 NVIDIA P100 GPUs. Base models, using the hyperparameters described in the paper, took about 0.4 seconds per step and were trained for 100,000 steps, roughly 12 hours. Big models took 1.0 second per step and were trained for 300,000 steps, about 3.5 days. Optimization used Adam with beta1 = 0.9, beta2 = 0.98 and epsilon = 1e-9. The learning rate increases linearly over the first warmup_steps training steps and then decreases proportionally to the inverse square root of the step number, with warmup_steps = 4000."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Training used 8 P100 GPUs. The base model trained for 300,000 steps over 3.5 days, while the big model trained for 100,000 steps in 12 hours. Adam was used with a warmup of 8000 steps.",
+    "label": "unfaithful",
+    "response_type": "swapped_roles_and_numeric_error",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "Training used 8 P100 GPUs",
+        "supported": true
+      },
+      {
+        "claim": "The base model trained 300,000 steps over 3.5 days",
+        "supported": false
+      },
+      {
+        "claim": "The big model trained 100,000 steps in 12 hours",
+        "supported": false
+      },
+      {
+        "claim": "Warmup was 8000 steps",
+        "supported": false
+      }
+    ],
+    "explanation": "Base and big schedules are swapped and warmup_steps is 4000, not 8000.",
+    "source": {
+      "section": "5.2 Hardware and Schedule / 5.3 Optimizer",
+      "page": 7
+    }
+  },
+  {
+    "id": "p008_faithful",
+    "source_id": "p008",
+    "query": "What regularization does the paper apply?",
+    "context": [
+      "Residual dropout is applied to the output of each sub-layer before it is added to the sub-layer input and normalized. Dropout is also applied to the sums of the embeddings and positional encodings in both stacks. The base model uses a dropout rate of 0.1. Label smoothing with value 0.1 is used during training; it hurts perplexity because the model learns to be more unsure, but improves accuracy and BLEU score. The big model trained for English-to-French used a dropout rate of 0.1 instead of 0.3."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The paper applies residual dropout to each sub-layer's output before the residual addition and normalization, and to the sums of embeddings and positional encodings; the base rate is 0.1. It also uses label smoothing of 0.1, which hurts perplexity but improves accuracy and BLEU. The big English-to-French model used dropout 0.1 rather than 0.3.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Residual dropout is applied to sub-layer outputs and to embedding plus positional sums",
+        "supported": true
+      },
+      {
+        "claim": "The base model's dropout rate is 0.1",
+        "supported": true
+      },
+      {
+        "claim": "Label smoothing 0.1 hurts perplexity but improves accuracy and BLEU",
+        "supported": true
+      },
+      {
+        "claim": "The big EN-FR model used dropout 0.1 instead of 0.3",
+        "supported": true
+      }
+    ],
+    "explanation": "Directly supported by the regularization description.",
+    "source": {
+      "section": "5.4 Regularization / 6.1",
+      "page": 8
+    }
+  },
+  {
+    "id": "p008_unfaithful",
+    "source_id": "p008",
+    "query": "What regularization does the paper apply?",
+    "context": [
+      "Residual dropout is applied to the output of each sub-layer before it is added to the sub-layer input and normalized. Dropout is also applied to the sums of the embeddings and positional encodings in both stacks. The base model uses a dropout rate of 0.1. Label smoothing with value 0.1 is used during training; it hurts perplexity because the model learns to be more unsure, but improves accuracy and BLEU score. The big model trained for English-to-French used a dropout rate of 0.1 instead of 0.3."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Dropout is applied only to the attention weights, with a rate of 0.3 for the base model. Label smoothing of 0.1 improves perplexity but lowers BLEU.",
+    "label": "unfaithful",
+    "response_type": "contradiction",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Dropout is applied only to attention weights",
+        "supported": false
+      },
+      {
+        "claim": "The base model's dropout rate is 0.3",
+        "supported": false
+      },
+      {
+        "claim": "Label smoothing improves perplexity",
+        "supported": false
+      },
+      {
+        "claim": "Label smoothing lowers BLEU",
+        "supported": false
+      }
+    ],
+    "explanation": "Dropout is applied to sub-layer outputs and embedding sums at 0.1 for the base model; label smoothing hurts perplexity but improves BLEU.",
+    "source": {
+      "section": "5.4 Regularization / 6.1",
+      "page": 8
+    }
+  },
+  {
+    "id": "p009_faithful",
+    "source_id": "p009",
+    "query": "What translation results did the Transformer achieve?",
+    "context": [
+      "On WMT 2014 English-to-German, the big Transformer reached 28.4 BLEU, outperforming the best previously reported models, including ensembles, by more than 2.0 BLEU; training took 3.5 days on 8 P100 GPUs. The base model, at 27.3 BLEU, also surpassed all previously published models and ensembles at a fraction of the training cost. On English-to-French, Table 2 and the abstract report 41.8 BLEU for the big model (38.1 for base), a new single-model state of the art at less than a quarter of the previous best model's training cost. The running text of Section 6.1 gives 41.0 for the same result. Estimated training cost is 3.3e18 FLOPs for the base model and 2.3e19 for the big model."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The big Transformer scored 28.4 BLEU on English-to-German, more than 2.0 BLEU above the best earlier results including ensembles, after 3.5 days on 8 P100 GPUs; the base model scored 27.3 and also beat prior models. On English-to-French the big model scored 41.8 BLEU in Table 2 and the abstract (the Section 6.1 text says 41.0) at under a quarter of the previous best cost. Training cost was about 3.3e18 FLOPs for base and 2.3e19 for big.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Big model: 28.4 BLEU on EN-DE, more than 2.0 above prior best including ensembles",
+        "supported": true
+      },
+      {
+        "claim": "Base model: 27.3 BLEU also surpasses prior models",
+        "supported": true
+      },
+      {
+        "claim": "EN-FR big model: 41.8 BLEU in Table 2 and abstract, 41.0 in Section 6.1 text",
+        "supported": true
+      },
+      {
+        "claim": "Training cost about 3.3e18 FLOPs (base) and 2.3e19 (big)",
+        "supported": true
+      }
+    ],
+    "explanation": "Faithful, and it correctly reports the internal inconsistency in the source.",
+    "source": {
+      "section": "6.1 Machine Translation / Table 2 / Abstract",
+      "page": 8
+    }
+  },
+  {
+    "id": "p009_unfaithful",
+    "source_id": "p009",
+    "query": "What translation results did the Transformer achieve?",
+    "context": [
+      "On WMT 2014 English-to-German, the big Transformer reached 28.4 BLEU, outperforming the best previously reported models, including ensembles, by more than 2.0 BLEU; training took 3.5 days on 8 P100 GPUs. The base model, at 27.3 BLEU, also surpassed all previously published models and ensembles at a fraction of the training cost. On English-to-French, Table 2 and the abstract report 41.8 BLEU for the big model (38.1 for base), a new single-model state of the art at less than a quarter of the previous best model's training cost. The running text of Section 6.1 gives 41.0 for the same result. Estimated training cost is 3.3e18 FLOPs for the base model and 2.3e19 for the big model."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The big Transformer scored 28.4 BLEU on English-to-German, beating the best ensembles by only about 0.5 BLEU, while the base model fell short of previous ensembles. On English-to-French the big model reached 41.8 BLEU at roughly half the training cost of the previous best.",
+    "label": "unfaithful",
+    "response_type": "numeric_error_and_contradiction",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "The big model scored 28.4 BLEU on EN-DE",
+        "supported": true
+      },
+      {
+        "claim": "It beat the best ensembles by only about 0.5 BLEU",
+        "supported": false
+      },
+      {
+        "claim": "The base model fell short of previous ensembles",
+        "supported": false
+      },
+      {
+        "claim": "EN-FR training cost was roughly half the previous best",
+        "supported": false
+      }
+    ],
+    "explanation": "The margin over prior best is more than 2.0 BLEU, the base model already surpassed all previous models and ensembles, and the EN-FR cost was under a quarter of the previous best.",
+    "source": {
+      "section": "6.1 Machine Translation / Table 2 / Abstract",
+      "page": 8
+    }
+  },
+  {
+    "id": "p010_faithful",
+    "source_id": "p010",
+    "query": "What did the ablation study show about the number of attention heads and the key dimension?",
+    "context": [
+      "In Table 3 rows (A), the number of attention heads and the key and value dimensions are varied while keeping computation constant. Single-head attention is 0.9 BLEU worse than the best setting (24.9 versus 25.8 on the development set), and quality also drops off when there are too many heads (for example 25.4 BLEU with 32 heads). In rows (B), reducing the attention key size d_k hurts model quality, which suggests that determining compatibility is not easy and that a more sophisticated compatibility function than dot product may be beneficial."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "With computation held constant, single-head attention was about 0.9 BLEU worse than the best setting (24.9 vs 25.8), and quality also dropped with too many heads, for example 25.4 BLEU at 32 heads. Reducing the key dimension d_k hurt quality, which the authors take to suggest that a more sophisticated compatibility function than dot product might help.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Single-head attention is 0.9 BLEU worse than the best setting",
+        "supported": true
+      },
+      {
+        "claim": "Too many heads also reduces quality, e.g. 25.4 BLEU at 32 heads",
+        "supported": true
+      },
+      {
+        "claim": "Reducing d_k hurts quality",
+        "supported": true
+      },
+      {
+        "claim": "This hints that a more sophisticated compatibility function may help",
+        "supported": true
+      }
+    ],
+    "explanation": "Directly supported by the Table 3 discussion.",
+    "source": {
+      "section": "6.2 Model Variations / Table 3",
+      "page": 9
+    }
+  },
+  {
+    "id": "p010_unfaithful",
+    "source_id": "p010",
+    "query": "What did the ablation study show about the number of attention heads and the key dimension?",
+    "context": [
+      "In Table 3 rows (A), the number of attention heads and the key and value dimensions are varied while keeping computation constant. Single-head attention is 0.9 BLEU worse than the best setting (24.9 versus 25.8 on the development set), and quality also drops off when there are too many heads (for example 25.4 BLEU with 32 heads). In rows (B), reducing the attention key size d_k hurts model quality, which suggests that determining compatibility is not easy and that a more sophisticated compatibility function than dot product may be beneficial."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Single-head attention matched the best setting, so multiple heads were unnecessary. Reducing d_k actually improved quality, showing that dot-product compatibility is already optimal.",
+    "label": "unfaithful",
+    "response_type": "contradiction",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Single-head attention matched the best setting",
+        "supported": false
+      },
+      {
+        "claim": "Reducing d_k improved quality",
+        "supported": false
+      },
+      {
+        "claim": "This shows dot-product compatibility is already optimal",
+        "supported": false
+      }
+    ],
+    "explanation": "The ablation reports single-head 0.9 BLEU worse and reduced d_k hurting quality, suggesting dot product may not be sufficient.",
+    "source": {
+      "section": "6.2 Model Variations / Table 3",
+      "page": 9
+    }
+  },
+  {
+    "id": "p011_faithful",
+    "source_id": "p011",
+    "query": "How did model size, dropout and learned positional embeddings affect results in the ablations?",
+    "context": [
+      "Rows (C) and (D) of Table 3 show that, as expected, bigger models are better and dropout is very helpful in avoiding over-fitting; for instance, setting dropout to 0.0 gives 24.6 BLEU versus 25.8 for the base setting. Row (E) replaces sinusoidal positional encoding with learned positional embeddings and gives nearly identical results (25.7 BLEU versus 25.8 for the base model). The base model has about 65 million parameters and 25.8 dev BLEU; the big model has about 213 million parameters and 26.4 dev BLEU."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Bigger models performed better and dropout helped avoid over-fitting; with no dropout the dev BLEU fell to 24.6 versus 25.8 for the base model. Learned positional embeddings gave nearly identical results (25.7 BLEU). The base model has about 65 million parameters (25.8 BLEU) and the big model about 213 million (26.4 BLEU).",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Bigger models are better and dropout avoids over-fitting",
+        "supported": true
+      },
+      {
+        "claim": "No dropout gives 24.6 BLEU vs 25.8 for base",
+        "supported": true
+      },
+      {
+        "claim": "Learned positional embeddings give nearly identical results (25.7 BLEU)",
+        "supported": true
+      },
+      {
+        "claim": "Base has about 65M params, big about 213M with 26.4 BLEU",
+        "supported": true
+      }
+    ],
+    "explanation": "Numbers all appear in the context.",
+    "source": {
+      "section": "6.2 Model Variations / Table 3",
+      "page": 9
+    }
+  },
+  {
+    "id": "p011_unfaithful",
+    "source_id": "p011",
+    "query": "How did model size, dropout and learned positional embeddings affect results in the ablations?",
+    "context": [
+      "Rows (C) and (D) of Table 3 show that, as expected, bigger models are better and dropout is very helpful in avoiding over-fitting; for instance, setting dropout to 0.0 gives 24.6 BLEU versus 25.8 for the base setting. Row (E) replaces sinusoidal positional encoding with learned positional embeddings and gives nearly identical results (25.7 BLEU versus 25.8 for the base model). The base model has about 65 million parameters and 25.8 dev BLEU; the big model has about 213 million parameters and 26.4 dev BLEU."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The base model has about 213 million parameters and the big model about 65 million. Removing dropout improved BLEU to 26.0, and learned positional embeddings were about 2 BLEU worse than sinusoids.",
+    "label": "unfaithful",
+    "response_type": "swapped_roles_and_numeric_error",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "The base model has about 213 million parameters and the big model about 65 million",
+        "supported": false
+      },
+      {
+        "claim": "Removing dropout improved BLEU to 26.0",
+        "supported": false
+      },
+      {
+        "claim": "Learned embeddings were about 2 BLEU worse",
+        "supported": false
+      }
+    ],
+    "explanation": "Parameter counts are swapped, removing dropout hurt (24.6), and learned embeddings gave nearly identical results.",
+    "source": {
+      "section": "6.2 Model Variations / Table 3",
+      "page": 9
+    }
+  },
+  {
+    "id": "p012_faithful",
+    "source_id": "p012",
+    "query": "How was the Transformer evaluated on English constituency parsing and how did it do?",
+    "context": [
+      "To test generalization, the authors trained a 4-layer Transformer with d_model = 1024 on the Wall Street Journal portion of the Penn Treebank (about 40K training sentences), and also in a semi-supervised setting with about 17M sentences, using vocabularies of 16K and 32K tokens respectively. Only a small number of experiments were run to choose dropout, learning rates and beam size; all other parameters stayed as in the English-to-German base model. At inference the maximum output length was increased to input length + 300, with beam size 21 and alpha = 0.3. On WSJ section 23 the model scored 91.3 F1 trained on WSJ only and 92.7 F1 in the semi-supervised setting. It outperformed the Berkeley Parser even when trained only on the WSJ set, and the paper says it beats all previously reported models except the Recurrent Neural Network Grammar."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "A 4-layer Transformer with d_model = 1024 was trained on the WSJ portion of the Penn Treebank (about 40K sentences) and in a semi-supervised setting with about 17M sentences, with only a small number of tuning experiments. It scored 91.3 F1 on WSJ only and 92.7 F1 semi-supervised, outperforming the Berkeley Parser even with WSJ-only training. Inference used beam size 21, alpha 0.3 and a maximum output length of input + 300.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "4-layer Transformer, d_model = 1024, trained on about 40K WSJ sentences and a 17M-sentence semi-supervised set",
+        "supported": true
+      },
+      {
+        "claim": "Only a small number of experiments were used for tuning",
+        "supported": true
+      },
+      {
+        "claim": "F1 was 91.3 (WSJ only) and 92.7 (semi-supervised)",
+        "supported": true
+      },
+      {
+        "claim": "Inference used beam 21, alpha 0.3, max length input + 300",
+        "supported": true
+      }
+    ],
+    "explanation": "Faithful to the parsing setup and results.",
+    "source": {
+      "section": "6.3 English Constituency Parsing / Table 4",
+      "page": 9
+    }
+  },
+  {
+    "id": "p012_unfaithful",
+    "source_id": "p012",
+    "query": "How was the Transformer evaluated on English constituency parsing and how did it do?",
+    "context": [
+      "To test generalization, the authors trained a 4-layer Transformer with d_model = 1024 on the Wall Street Journal portion of the Penn Treebank (about 40K training sentences), and also in a semi-supervised setting with about 17M sentences, using vocabularies of 16K and 32K tokens respectively. Only a small number of experiments were run to choose dropout, learning rates and beam size; all other parameters stayed as in the English-to-German base model. At inference the maximum output length was increased to input length + 300, with beam size 21 and alpha = 0.3. On WSJ section 23 the model scored 91.3 F1 trained on WSJ only and 92.7 F1 in the semi-supervised setting. It outperformed the Berkeley Parser even when trained only on the WSJ set, and the paper says it beats all previously reported models except the Recurrent Neural Network Grammar."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "A 6-layer Transformer was trained on WSJ with 17M sentences and reached 95.1 F1, the best parsing result ever reported. This required extensive task-specific tuning of the architecture.",
+    "label": "unfaithful",
+    "response_type": "contradiction_and_fabrication",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "The model had 6 layers",
+        "supported": false
+      },
+      {
+        "claim": "WSJ training used 17M sentences",
+        "supported": false
+      },
+      {
+        "claim": "It reached 95.1 F1, the best ever reported",
+        "supported": false
+      },
+      {
+        "claim": "It required extensive task-specific tuning",
+        "supported": false
+      }
+    ],
+    "explanation": "The context gives a 4-layer model, about 40K WSJ sentences, 91.3/92.7 F1, a better model existing (the RNN grammar), and only a small number of tuning experiments.",
+    "source": {
+      "section": "6.3 English Constituency Parsing / Table 4",
+      "page": 9
+    }
+  },
+  {
+    "id": "p013_faithful",
+    "source_id": "p013",
+    "query": "What do the attention visualizations in the appendix show?",
+    "context": [
+      "Figure 3 shows encoder self-attention in layer 5 of 6, where many heads attend to a distant dependency of the verb 'making', completing the phrase 'making...more difficult'; different colors represent different heads. Figure 4 shows two heads, also in layer 5 of 6, that appear to be involved in anaphora resolution; the attentions from the word 'its' are very sharp for heads 5 and 6. Figure 5 gives two examples from different encoder self-attention heads in layer 5 whose behavior seems related to the structure of the sentence, and the heads clearly learned to perform different tasks. The authors note that self-attention may yield more interpretable models."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "In encoder layer 5 of 6, many heads attend from 'making' to its distant completion 'more difficult'. Two heads (5 and 6) in the same layer seem to perform anaphora resolution, with very sharp attention from 'its'. Other heads show behavior related to sentence structure, and the heads clearly learned different tasks, which supports the claim that self-attention could be more interpretable.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "Layer 5 heads link 'making' to 'more difficult'",
+        "supported": true
+      },
+      {
+        "claim": "Heads 5 and 6 appear to resolve anaphora with sharp attention from 'its'",
+        "supported": true
+      },
+      {
+        "claim": "Other heads reflect sentence structure and learned different tasks",
+        "supported": true
+      },
+      {
+        "claim": "Self-attention may be more interpretable",
+        "supported": true
+      }
+    ],
+    "explanation": "Matches the figure descriptions.",
+    "source": {
+      "section": "Attention Visualizations / Figures 3-5",
+      "page": 13
+    }
+  },
+  {
+    "id": "p013_unfaithful",
+    "source_id": "p013",
+    "query": "What do the attention visualizations in the appendix show?",
+    "context": [
+      "Figure 3 shows encoder self-attention in layer 5 of 6, where many heads attend to a distant dependency of the verb 'making', completing the phrase 'making...more difficult'; different colors represent different heads. Figure 4 shows two heads, also in layer 5 of 6, that appear to be involved in anaphora resolution; the attentions from the word 'its' are very sharp for heads 5 and 6. Figure 5 gives two examples from different encoder self-attention heads in layer 5 whose behavior seems related to the structure of the sentence, and the heads clearly learned to perform different tasks. The authors note that self-attention may yield more interpretable models."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The visualizations are from decoder layer 2 and show all heads learning the same task. Head 3 resolves the pronoun 'it' to the noun 'government', and attention for 'making' is spread uniformly across the sentence.",
+    "label": "unfaithful",
+    "response_type": "contradiction_and_fabrication",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "The visualizations come from decoder layer 2",
+        "supported": false
+      },
+      {
+        "claim": "All heads learned the same task",
+        "supported": false
+      },
+      {
+        "claim": "Head 3 resolves 'it' to 'government'",
+        "supported": false
+      },
+      {
+        "claim": "Attention for 'making' is spread uniformly",
+        "supported": false
+      }
+    ],
+    "explanation": "The figures are from encoder layer 5, heads learned different tasks, the anaphora example is 'its' for heads 5 and 6, and 'making' attends sharply to 'more difficult'.",
+    "source": {
+      "section": "Attention Visualizations / Figures 3-5",
+      "page": 13
+    }
+  },
+  {
+    "id": "p014_faithful",
+    "source_id": "p014",
+    "query": "Why does the paper argue self-attention handles long-range dependencies better than convolutional models like ConvS2S and ByteNet?",
+    "context": [
+      "Models such as the Extended Neural GPU, ByteNet and ConvS2S use convolutions to compute representations in parallel, but the number of operations needed to relate two positions grows with the distance between them: linearly for ConvS2S and logarithmically for ByteNet. In the Transformer this is a constant number of operations, at the cost of reduced effective resolution from averaging attention-weighted positions, an effect counteracted by multi-head attention. A single convolutional layer with kernel width k < n does not connect all input and output positions, so a stack of O(n/k) layers (contiguous kernels) or O(log_k(n)) layers (dilated convolutions) is required. Convolutional layers are generally more expensive than recurrent layers by a factor of k."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "For ConvS2S the operations needed to relate two positions grow linearly with distance and for ByteNet logarithmically, whereas the Transformer needs a constant number, at the cost of reduced effective resolution from averaging, which multi-head attention counteracts. A single convolutional layer with k < n doesn't connect all pairs, so many layers are needed, and convolutions are generally more expensive than recurrent layers by a factor of k.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "ConvS2S grows linearly with distance, ByteNet logarithmically, Transformer is constant",
+        "supported": true
+      },
+      {
+        "claim": "The Transformer pays a cost of reduced resolution from averaging, countered by multi-head attention",
+        "supported": true
+      },
+      {
+        "claim": "A single conv layer with k < n does not connect all positions",
+        "supported": true
+      },
+      {
+        "claim": "Convolutions are more expensive than recurrent layers by a factor of k",
+        "supported": true
+      }
+    ],
+    "explanation": "Accurately reflects the comparison.",
+    "source": {
+      "section": "2 Background / 4 Why Self-Attention",
+      "page": 2
+    }
+  },
+  {
+    "id": "p014_unfaithful",
+    "source_id": "p014",
+    "query": "Why does the paper argue self-attention handles long-range dependencies better than convolutional models like ConvS2S and ByteNet?",
+    "context": [
+      "Models such as the Extended Neural GPU, ByteNet and ConvS2S use convolutions to compute representations in parallel, but the number of operations needed to relate two positions grows with the distance between them: linearly for ConvS2S and logarithmically for ByteNet. In the Transformer this is a constant number of operations, at the cost of reduced effective resolution from averaging attention-weighted positions, an effect counteracted by multi-head attention. A single convolutional layer with kernel width k < n does not connect all input and output positions, so a stack of O(n/k) layers (contiguous kernels) or O(log_k(n)) layers (dilated convolutions) is required. Convolutional layers are generally more expensive than recurrent layers by a factor of k."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "For ByteNet the number of operations grows linearly with distance and for ConvS2S logarithmically, while the Transformer needs a constant number with no downside. A single convolutional layer connects all positions, and convolutions are cheaper than recurrent layers by a factor of k.",
+    "label": "unfaithful",
+    "response_type": "swapped_roles_and_contradiction",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "ByteNet grows linearly and ConvS2S logarithmically",
+        "supported": false
+      },
+      {
+        "claim": "The Transformer's constant path has no downside",
+        "supported": false
+      },
+      {
+        "claim": "A single convolutional layer connects all positions",
+        "supported": false
+      },
+      {
+        "claim": "Convolutions are cheaper than recurrent layers by a factor of k",
+        "supported": false
+      }
+    ],
+    "explanation": "ConvS2S is linear and ByteNet logarithmic; the Transformer's averaging reduces resolution; a k < n convolution doesn't connect all pairs; convolutions are costlier than recurrent layers.",
+    "source": {
+      "section": "2 Background / 4 Why Self-Attention",
+      "page": 2
+    }
+  },
+  {
+    "id": "p015_faithful",
+    "source_id": "p015",
+    "query": "How were training FLOPs estimated and what decoding settings were used for translation?",
+    "context": [
+      "The number of floating point operations used to train a model is estimated by multiplying the training time, the number of GPUs, and an estimate of each GPU's sustained single-precision floating-point capacity. The estimates used were 2.8, 3.7, 6.0 and 9.5 TFLOPS for the K80, K40, M40 and P100 respectively. For the translation results, base models used a single model obtained by averaging the last 5 checkpoints, written at 10-minute intervals, and big models averaged the last 20 checkpoints. Decoding used beam search with beam size 4 and length penalty alpha = 0.6, with maximum output length set to input length + 50 but terminating early when possible. These hyperparameters were chosen on the development set."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "FLOPs were estimated as training time times number of GPUs times an estimate of each GPU's sustained single-precision capacity, using 2.8, 3.7, 6.0 and 9.5 TFLOPS for K80, K40, M40 and P100. Base models averaged the last 5 checkpoints (10 minutes apart) and big models the last 20. Decoding used beam size 4, length penalty 0.6 and maximum output length input + 50, chosen on the development set.",
+    "label": "faithful",
+    "response_type": "grounded_answer",
+    "difficulty": "medium",
+    "claims": [
+      {
+        "claim": "FLOPs = training time × GPUs × sustained single-precision capacity estimate",
+        "supported": true
+      },
+      {
+        "claim": "TFLOPS values: 2.8, 3.7, 6.0, 9.5 for K80, K40, M40, P100",
+        "supported": true
+      },
+      {
+        "claim": "Base averaged last 5 checkpoints, big averaged last 20",
+        "supported": true
+      },
+      {
+        "claim": "Beam size 4, length penalty 0.6, max length input + 50",
+        "supported": true
+      }
+    ],
+    "explanation": "All numbers appear in the context.",
+    "source": {
+      "section": "6.1 Machine Translation / footnote 5",
+      "page": 8
+    }
+  },
+  {
+    "id": "p015_unfaithful",
+    "source_id": "p015",
+    "query": "How were training FLOPs estimated and what decoding settings were used for translation?",
+    "context": [
+      "The number of floating point operations used to train a model is estimated by multiplying the training time, the number of GPUs, and an estimate of each GPU's sustained single-precision floating-point capacity. The estimates used were 2.8, 3.7, 6.0 and 9.5 TFLOPS for the K80, K40, M40 and P100 respectively. For the translation results, base models used a single model obtained by averaging the last 5 checkpoints, written at 10-minute intervals, and big models averaged the last 20 checkpoints. Decoding used beam search with beam size 4 and length penalty alpha = 0.6, with maximum output length set to input length + 50 but terminating early when possible. These hyperparameters were chosen on the development set."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "FLOPs were measured with a hardware profiler, and the P100 was assumed to deliver 2.8 TFLOPS. Both base and big models averaged the last 10 checkpoints and decoded with a beam size of 21.",
+    "label": "unfaithful",
+    "response_type": "extrinsic_and_numeric_error",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "FLOPs were measured with a hardware profiler",
+        "supported": false
+      },
+      {
+        "claim": "The P100 was assumed to deliver 2.8 TFLOPS",
+        "supported": false
+      },
+      {
+        "claim": "Both models averaged the last 10 checkpoints",
+        "supported": false
+      },
+      {
+        "claim": "Decoding used beam size 21",
+        "supported": false
+      }
+    ],
+    "explanation": "FLOPs were estimated, not profiled; the P100 estimate is 9.5 TFLOPS; checkpoint counts are 5 and 20; beam size 21 belongs to the parsing experiments, not translation (beam 4).",
+    "source": {
+      "section": "6.1 Machine Translation / footnote 5",
+      "page": 8
+    }
+  },
+  {
+    "id": "p016_faithful",
+    "source_id": "p016",
+    "query": "What was the Transformer's inference latency per sentence?",
+    "context": [
+      "Models were trained on one machine with 8 NVIDIA P100 GPUs. Base models took about 0.4 seconds per training step and were trained for 100,000 steps, roughly 12 hours. Big models took 1.0 second per step and were trained for 300,000 steps, about 3.5 days."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "The provided context does not report inference latency. It only gives training information: 8 P100 GPUs, about 0.4 seconds per step for the base model (100,000 steps, roughly 12 hours) and 1.0 second per step for the big model (300,000 steps, about 3.5 days).",
+    "label": "faithful",
+    "response_type": "abstention_with_context",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "The context does not report inference latency",
+        "supported": true
+      },
+      {
+        "claim": "Base model: about 0.4 s per training step, 100,000 steps, roughly 12 hours",
+        "supported": true
+      },
+      {
+        "claim": "Big model: 1.0 s per step, 300,000 steps, about 3.5 days",
+        "supported": true
+      }
+    ],
+    "explanation": "The context covers training time only; the response says so instead of guessing.",
+    "source": {
+      "section": "5.2 Hardware and Schedule",
+      "page": 7
+    }
+  },
+  {
+    "id": "p016_unfaithful",
+    "source_id": "p016",
+    "query": "What was the Transformer's inference latency per sentence?",
+    "context": [
+      "Models were trained on one machine with 8 NVIDIA P100 GPUs. Base models took about 0.4 seconds per training step and were trained for 100,000 steps, roughly 12 hours. Big models took 1.0 second per step and were trained for 300,000 steps, about 3.5 days."
+    ],
+    "context_type": "paraphrased_excerpt",
+    "response": "Inference latency was about 25 milliseconds per sentence on a single P100 GPU, roughly 0.4 seconds per step for the base model.",
+    "label": "unfaithful",
+    "response_type": "fabrication_and_conflation",
+    "difficulty": "hard",
+    "claims": [
+      {
+        "claim": "Inference latency was about 25 ms per sentence on a P100",
+        "supported": false
+      },
+      {
+        "claim": "0.4 seconds per step is the inference latency",
+        "supported": false
+      }
+    ],
+    "explanation": "The 0.4 s figure is the training step time; no inference latency is provided.",
+    "source": {
+      "section": "5.2 Hardware and Schedule",
+      "page": 7
+    }
+  }
+]
