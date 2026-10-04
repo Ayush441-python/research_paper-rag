@@ -1,0 +1,110 @@
+[
+  {
+    "id": "A001",
+    "question": "what is the core idea of the transformer and what did it remove from earlier sequence models?",
+    "ideal_answer": "The Transformer is a sequence transduction architecture built entirely on attention mechanisms. It dispenses with recurrence and convolutions, which earlier encoder-decoder models relied on. Because it has no recurrent steps, computation within a training example can be parallelised, so it trains much faster while achieving better translation quality.",
+    "source_section": "Abstract, Section 1"
+  },
+  {
+    "id": "A002",
+    "question": "why is the sequential nature of RNNs a problem?",
+    "ideal_answer": "An RNN computes hidden states one position at a time, with each state depending on the previous one. This sequential dependency precludes parallelisation within a training example, which becomes critical at longer sequence lengths because memory limits batching across examples. It also makes it harder to learn long-range dependencies, since signals must travel through many steps.",
+    "source_section": "Section 1-2"
+  },
+  {
+    "id": "A003",
+    "question": "what is the overall architecture of the transformer?",
+    "ideal_answer": "It is an encoder-decoder model. The encoder is a stack of N=6 identical layers, each with two sub-layers: multi-head self-attention and a position-wise feed-forward network. The decoder is also a stack of 6 identical layers with those same two sub-layers plus a third sub-layer that performs multi-head attention over the encoder output. Each sub-layer is wrapped with a residual connection followed by layer normalisation.",
+    "source_section": "Section 3.1"
+  },
+  {
+    "id": "A004",
+    "question": "what is the formula for scaled dot-product attention?",
+    "ideal_answer": "Attention(Q, K, V) = softmax(QK^T / sqrt(d_k)) V. The queries are dot-producted with all keys, the result is divided by the square root of the key dimension d_k, a softmax turns the scores into weights, and those weights are used to take a weighted sum of the values.",
+    "source_section": "Section 3.2.1"
+  },
+  {
+    "id": "A005",
+    "question": "why do we divide by sqrt(d_k) in scaled dot-product attention?",
+    "ideal_answer": "For large d_k the dot products grow large in magnitude; if query and key components are independent with mean 0 and variance 1, their dot product has variance d_k. Large values push the softmax into regions with extremely small gradients. Dividing by sqrt(d_k) keeps the scores at a reasonable scale so the softmax still gives useful gradients.",
+    "source_section": "Section 3.2.1"
+  },
+  {
+    "id": "A006",
+    "question": "what is multi-head attention and why use it instead of a single attention function?",
+    "ideal_answer": "Multi-head attention linearly projects the queries, keys and values h times with different learned projections, runs scaled dot-product attention on each projection in parallel, then concatenates the outputs and applies a final linear projection. It lets the model jointly attend to information from different representation subspaces at different positions, which a single attention head tends to average away. The base model uses h=8 heads with d_k = d_v = 64, so the total cost is similar to single-head attention at full dimensionality.",
+    "source_section": "Section 3.2.2"
+  },
+  {
+    "id": "A007",
+    "question": "in what three ways does the transformer use multi-head attention?",
+    "ideal_answer": "First, in encoder-decoder attention, queries come from the previous decoder layer while keys and values come from the encoder output, letting every decoder position attend over the whole input. Second, the encoder uses self-attention, where queries, keys and values all come from the previous encoder layer so each position can attend to all positions. Third, the decoder uses masked self-attention, where each position can only attend to earlier positions and itself, preserving the auto-regressive property.",
+    "source_section": "Section 3.2.3"
+  },
+  {
+    "id": "A008",
+    "question": "why does the decoder self-attention need masking?",
+    "ideal_answer": "The decoder generates output one token at a time, so predicting position i must depend only on known outputs at positions before i. Masking sets the softmax inputs for illegal connections to negative infinity, preventing leftward information flow of future tokens. Combined with offsetting the output embeddings by one position, this ensures the predictions cannot see the tokens they are meant to predict.",
+    "source_section": "Section 3.1, 3.2.3"
+  },
+  {
+    "id": "A009",
+    "question": "why does the transformer need positional encodings and how are they computed?",
+    "ideal_answer": "Because the model has no recurrence or convolution, self-attention by itself is order-agnostic, so information about token position must be injected explicitly. The paper adds sinusoidal positional encodings to the input embeddings, using sine and cosine functions of different frequencies: PE(pos, 2i) = sin(pos / 10000^(2i/d_model)) and PE(pos, 2i+1) = cos(pos / 10000^(2i/d_model)). The authors chose this because it may let the model attend by relative position and extrapolate to longer sequences, and they found learned positional embeddings gave nearly identical results.",
+    "source_section": "Section 3.5"
+  },
+  {
+    "id": "A010",
+    "question": "what is the position-wise feed-forward network in each layer?",
+    "ideal_answer": "It is a small fully connected network applied to each position separately and identically: FFN(x) = max(0, xW1 + b1)W2 + b2, i.e. a linear layer, a ReLU, then another linear layer. In the base model the input and output dimension is d_model=512 and the inner layer has dimension d_ff=2048. It can also be described as two convolutions with kernel size 1.",
+    "source_section": "Section 3.3"
+  },
+  {
+    "id": "A011",
+    "question": "how does self-attention compare to recurrent and convolutional layers in complexity and path length?",
+    "ideal_answer": "Self-attention costs O(n^2 * d) per layer, with O(1) sequential operations and a maximum path length of O(1) between any two positions. Recurrent layers cost O(n * d^2) with O(n) sequential operations and O(n) path length. Convolutional layers cost O(k * n * d^2) with O(1) sequential operations and a path length of O(log_k(n)) when using dilated convolutions. Self-attention is cheaper than recurrence when sequence length n is smaller than representation dimension d, which is typical for sentence-level translation.",
+    "source_section": "Section 4, Table 1"
+  },
+  {
+    "id": "A012",
+    "question": "what are the hyperparameters of the base and big transformer models?",
+    "ideal_answer": "The base model uses N=6 layers, d_model=512, d_ff=2048, h=8 heads, d_k=d_v=64 and dropout 0.1, with about 65 million parameters. The big model uses N=6, d_model=1024, d_ff=4096, h=16 and dropout 0.3 for English-German (0.1 for English-French), with about 213 million parameters.",
+    "source_section": "Section 6.1-6.2, Table 3-4"
+  },
+  {
+    "id": "A013",
+    "question": "what optimizer and learning rate schedule were used to train the transformer?",
+    "ideal_answer": "The authors used the Adam optimizer with beta1=0.9, beta2=0.98 and epsilon=1e-9. The learning rate follows a schedule that increases linearly for the first warmup_steps=4000 training steps and then decreases proportionally to the inverse square root of the step number, scaled by d_model^-0.5.",
+    "source_section": "Section 5.3"
+  },
+  {
+    "id": "A014",
+    "question": "what regularization techniques did the paper use?",
+    "ideal_answer": "Residual dropout is applied to the output of each sub-layer before it is added to the sub-layer input and normalised, and also to the sums of embeddings and positional encodings, with a rate of 0.1 for the base model. The paper also uses label smoothing with epsilon=0.1, which hurts perplexity because the model learns to be more unsure, but improves accuracy and BLEU score.",
+    "source_section": "Section 5.4"
+  },
+  {
+    "id": "A015",
+    "question": "what machine translation results did the transformer achieve?",
+    "ideal_answer": "On WMT 2014 English-to-German, the big transformer reached 28.4 BLEU, improving over the previous best results, including ensembles, by more than 2 BLEU. On WMT 2014 English-to-French, it reached 41.8 BLEU, a new single-model state of the art, after training for 3.5 days on eight P100 GPUs, at a fraction of the training cost of earlier best models.",
+    "source_section": "Section 6.1, Table 2"
+  },
+  {
+    "id": "A016",
+    "question": "what did the ablation study show about the number of attention heads?",
+    "ideal_answer": "Single-head attention was about 0.9 BLEU worse than the best setting with the computation held constant, but quality also dropped when there were too many heads. Reducing the attention key size d_k hurt quality as well, suggesting that determining compatibility is not easy and a more sophisticated function than the dot product might help.",
+    "source_section": "Section 6.2, Table 3"
+  },
+  {
+    "id": "A017",
+    "question": "did the transformer generalise beyond machine translation?",
+    "ideal_answer": "Yes. The authors tested it on English constituency parsing using a 4-layer transformer with d_model=1024. Trained only on the WSJ portion of the Penn Treebank it reached 91.3 F1, and in a semi-supervised setting with larger corpora it reached 92.7 F1. This showed the architecture performs well on a task with strong structural constraints and long outputs without task-specific tuning.",
+    "source_section": "Section 6.3"
+  },
+  {
+    "id": "A018",
+    "question": "how are embeddings handled in the transformer?",
+    "ideal_answer": "The model uses learned embeddings to convert input and output tokens to vectors of dimension d_model. The same weight matrix is shared between the two embedding layers and the pre-softmax linear transformation, and in the embedding layers those weights are multiplied by sqrt(d_model).",
+    "source_section": "Section 3.4"
+  }
+]
