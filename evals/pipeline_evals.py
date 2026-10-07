@@ -14,7 +14,6 @@ from src.rag_pipeline import RagPipeline
 load_dotenv()
 
 GOLDEN_PATH = "goldens/faithfullness_dataset.json"
-JUDGE_MODEL = "gpt-4o-mini"
 THRESHOLD = 0.7
 
 

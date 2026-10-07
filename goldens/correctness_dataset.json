@@ -88,23 +88,5 @@
     "question": "what machine translation results did the transformer achieve?",
     "ideal_answer": "On WMT 2014 English-to-German, the big transformer reached 28.4 BLEU, improving over the previous best results, including ensembles, by more than 2 BLEU. On WMT 2014 English-to-French, it reached 41.8 BLEU, a new single-model state of the art, after training for 3.5 days on eight P100 GPUs, at a fraction of the training cost of earlier best models.",
     "source_section": "Section 6.1, Table 2"
-  },
-  {
-    "id": "A016",
-    "question": "what did the ablation study show about the number of attention heads?",
-    "ideal_answer": "Single-head attention was about 0.9 BLEU worse than the best setting with the computation held constant, but quality also dropped when there were too many heads. Reducing the attention key size d_k hurt quality as well, suggesting that determining compatibility is not easy and a more sophisticated function than the dot product might help.",
-    "source_section": "Section 6.2, Table 3"
-  },
-  {
-    "id": "A017",
-    "question": "did the transformer generalise beyond machine translation?",
-    "ideal_answer": "Yes. The authors tested it on English constituency parsing using a 4-layer transformer with d_model=1024. Trained only on the WSJ portion of the Penn Treebank it reached 91.3 F1, and in a semi-supervised setting with larger corpora it reached 92.7 F1. This showed the architecture performs well on a task with strong structural constraints and long outputs without task-specific tuning.",
-    "source_section": "Section 6.3"
-  },
-  {
-    "id": "A018",
-    "question": "how are embeddings handled in the transformer?",
-    "ideal_answer": "The model uses learned embeddings to convert input and output tokens to vectors of dimension d_model. The same weight matrix is shared between the two embedding layers and the pre-softmax linear transformation, and in the embedding layers those weights are multiplied by sqrt(d_model).",
-    "source_section": "Section 3.4"
   }
 ]
