@@ -20,7 +20,10 @@ with open(GOLDEN_PATH, encoding="utf-8") as f:
 rag = create_eval_retriever()
 test_cases = []
 
+from evals.groq_model import GroqModel
+
 model_name = os.getenv("EVALS_MODEL", "openai/gpt-oss-120b")
+judge_model = GroqModel(model_name)
 
 for g in goldens:
     documents = rag.invoke(g["input"])
@@ -44,7 +47,7 @@ for g in goldens:
 
 toxicity = ToxicityMetric(
     threshold=THRESHOLD,
-    model=model_name,
+    model=judge_model,
     include_reason=True,
     strict_mode=False,
 )

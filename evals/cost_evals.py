@@ -1,7 +1,12 @@
+import sys
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8")
+
 from dotenv import load_dotenv
 
 from src.rag_pipeline import RagPipeline
-from src.generator import prompt, llm
+from src.llm.prompt import get_prompt
+from src.llm.llm import get_llm
 
 load_dotenv()
 
@@ -23,6 +28,8 @@ USD_TO_INR = 88.0
 
 COST_BUDGET_PER_QUERY_USD = 0.0015
 
+prompt = get_prompt()
+llm = get_llm()
 measured_chain = prompt | llm
 
 

@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 
 from deepeval import evaluate
@@ -6,9 +7,11 @@ from deepeval.metrics import GEval
 from deepeval.metrics.g_eval import Rubric
 
 from src.rag_pipeline import RagPipeline
+from evals.groq_model import GroqModel
 
 load_dotenv()
 
+JUDGE_MODEL = GroqModel(os.getenv("EVALS_MODEL", "openai/gpt-oss-120b"))
 GOLDEN_PATH = "goldens/correctness_dataset.json"
 THRESHOLD = 0.7
 

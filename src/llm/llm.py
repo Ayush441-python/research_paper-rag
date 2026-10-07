@@ -9,7 +9,8 @@ def get_llm():
 
     llm = ChatGroq(
         model=os.getenv("GROQ_MODEL"),
-        temperature=0
+        temperature=0,
+        max_retries=5
     )
 
     return llm

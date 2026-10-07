@@ -1,5 +1,5 @@
 import json
-
+import os
 from dotenv import load_dotenv
 from deepeval import evaluate
 from deepeval.test_case import LLMTestCase
@@ -10,9 +10,11 @@ from deepeval.metrics import (
 )
 
 from src.rag_pipeline import RagPipeline
+from evals.groq_model import GroqModel
 
 load_dotenv()
 
+JUDGE_MODEL = GroqModel(os.getenv("EVALS_MODEL", "openai/gpt-oss-120b"))
 GOLDEN_PATH = "goldens/faithfullness_dataset.json"
 THRESHOLD = 0.7
 

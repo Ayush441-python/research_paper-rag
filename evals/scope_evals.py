@@ -1,3 +1,4 @@
+import os
 import json
 from dotenv import load_dotenv
 
@@ -7,10 +8,12 @@ from deepeval.metrics import GEval
 from deepeval.metrics.g_eval import Rubric
 
 from src.rag_pipeline import RagPipeline
+from evals.groq_model import GroqModel
 
 load_dotenv()
 
-GOLDEN_PATH = "goldens/scope_dataset.json" 
+JUDGE_MODEL = GroqModel(os.getenv("EVALS_MODEL", "openai/gpt-oss-120b"))
+GOLDEN_PATH = "goldens/scpoe_dataset.json" if os.path.exists("goldens/scpoe_dataset.json") else "goldens/scope_dataset.json"
 THRESHOLD = 0.7
 
 

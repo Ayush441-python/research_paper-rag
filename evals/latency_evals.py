@@ -4,7 +4,7 @@ import time
 from dotenv import load_dotenv
 
 from src.rag_pipeline import RagPipeline
-from src.generator import generate, generate_stream
+from src.llm.generator import generate, generate_stream
 
 load_dotenv()
 

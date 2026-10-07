@@ -1,3 +1,4 @@
+import os
 import json
 from dotenv import load_dotenv
 
@@ -7,9 +8,11 @@ from deepeval.metrics import GEval, PIILeakageMetric
 from deepeval.metrics.g_eval import Rubric
 
 from src.rag_pipeline import RagPipeline
+from evals.groq_model import GroqModel
 
 load_dotenv()
 
+JUDGE_MODEL = GroqModel(os.getenv("EVALS_MODEL", "openai/gpt-oss-120b"))
 GOLDEN_PATH = "goldens/leakage_dataset.json"
 
 
