@@ -16,3 +16,5 @@ sentence-transformers
 rank-bm25
 deepeval
 pydantic
+PyYAML>=6.0.1
+setuptools
