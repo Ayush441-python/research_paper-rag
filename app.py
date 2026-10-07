@@ -3,7 +3,7 @@ import requests
 import streamlit as st
 
 # Configure API URL from environment variable or default to local FastAPI server
-API_URL = os.getenv("API_URL", "http://localhost:8000/api").rstrip("/")
+API_URL = os.getenv("API_URL", "https://research-paper-rag-lnvq.onrender.com").rstrip("/")
 
 st.set_page_config(page_title="Research RAG", page_icon="📚", layout="centered")
 
