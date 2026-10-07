@@ -2,8 +2,12 @@ import os
 import requests
 import streamlit as st
 
-# Configure API URL from environment variable or default to local FastAPI server
-API_URL = os.getenv("API_URL", "https://research-paper-rag-lnvq.onrender.com").rstrip("/")
+# Configure API URL from environment variable
+raw_url = os.getenv("API_URL", "https://rag-pipeline-7my3.onrender.com").rstrip("/")
+if not raw_url.endswith("/api"):
+    API_URL = f"{raw_url}/api"
+else:
+    API_URL = raw_url
 
 st.set_page_config(page_title="Research RAG", page_icon="📚", layout="centered")
 
@@ -16,13 +20,13 @@ with st.sidebar:
 
     # Backend status badge
     try:
-        res = requests.get(f"{API_URL}/health", timeout=3)
+        res = requests.get(f"{API_URL}/health", timeout=15)
         if res.ok:
             st.success("Backend: Connected ✅")
         else:
-            st.warning("Backend: Error ⚠️")
+            st.warning("Backend: Waking up... ⏳ (Refresh in 10s)")
     except Exception:
-        st.error("Backend: Offline ❌")
+        st.error("Backend: Offline or Starting ❌")
 
     uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
     if uploaded_file and st.button("Upload & Index", use_container_width=True):
