@@ -30,10 +30,10 @@ with st.sidebar:
 
     uploaded_file = st.file_uploader("Upload PDF", type=["pdf"])
     if uploaded_file and st.button("Upload & Index", use_container_width=True):
-        with st.spinner("Processing document..."):
+        with st.spinner("Processing document... (may take 30-60s on Render)"):
             try:
                 files = {"file": (uploaded_file.name, uploaded_file.getvalue(), "application/pdf")}
-                res = requests.post(f"{API_URL}/upload", files=files, timeout=120)
+                res = requests.post(f"{API_URL}/upload", files=files, timeout=300)
                 if res.ok:
                     st.success("Document indexed! 🎉")
                 else:
@@ -64,7 +64,7 @@ if prompt := st.chat_input("Ask a question about your paper..."):
                 res = requests.post(
                     f"{API_URL}/chat",
                     json={"question": prompt},
-                    timeout=120
+                    timeout=180
                 )
                 if res.ok:
                     data = res.json()

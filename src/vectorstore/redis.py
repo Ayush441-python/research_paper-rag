@@ -10,6 +10,7 @@ from langchain_core.documents import Document
 import os
 import json
 
+_CURRENT_INMEMORY_STORE = None
 
 
 def get_fallback_documents():
@@ -51,6 +52,7 @@ def get_fallback_documents():
 
 
 def create_vectorstore(documents, embeddings):
+    global _CURRENT_INMEMORY_STORE
     if HAS_REDIS and os.getenv("REDIS_URL"):
         try:
             vector_store = RedisVectorStore.from_documents(
@@ -62,10 +64,12 @@ def create_vectorstore(documents, embeddings):
             return vector_store
         except Exception:
             pass
-    return InMemoryVectorStore.from_documents(documents, embeddings)
+    _CURRENT_INMEMORY_STORE = InMemoryVectorStore.from_documents(documents, embeddings)
+    return _CURRENT_INMEMORY_STORE
 
 
 def get_vectorstore(embeddings):
+    global _CURRENT_INMEMORY_STORE
     if HAS_REDIS and os.getenv("REDIS_URL"):
         try:
             vector_store = RedisVectorStore(
@@ -77,6 +81,9 @@ def get_vectorstore(embeddings):
             return vector_store
         except Exception:
             pass
+    if _CURRENT_INMEMORY_STORE is not None:
+        return _CURRENT_INMEMORY_STORE
+
     docs = get_fallback_documents()
-    return InMemoryVectorStore.from_documents(docs, embeddings)
-
+    _CURRENT_INMEMORY_STORE = InMemoryVectorStore.from_documents(docs, embeddings)
+    return _CURRENT_INMEMORY_STORE
