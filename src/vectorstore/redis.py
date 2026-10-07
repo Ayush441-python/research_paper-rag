@@ -1,8 +1,15 @@
-from langchain_redis import RedisVectorStore
+try:
+    from langchain_redis import RedisVectorStore
+    HAS_REDIS = True
+except ImportError:
+    RedisVectorStore = None
+    HAS_REDIS = False
+
 from langchain_core.vectorstores import InMemoryVectorStore
 from langchain_core.documents import Document
 import os
 import json
+
 
 
 def get_fallback_documents():
@@ -44,27 +51,32 @@ def get_fallback_documents():
 
 
 def create_vectorstore(documents, embeddings):
-    try:
-        vector_store = RedisVectorStore.from_documents(
-            documents=documents,
-            embedding=embeddings,
-            redis_url=os.getenv("REDIS_URL"),
-            index_name="pdf_rag"
-        )
-        return vector_store
-    except Exception:
-        return InMemoryVectorStore.from_documents(documents, embeddings)
+    if HAS_REDIS and os.getenv("REDIS_URL"):
+        try:
+            vector_store = RedisVectorStore.from_documents(
+                documents=documents,
+                embedding=embeddings,
+                redis_url=os.getenv("REDIS_URL"),
+                index_name="pdf_rag"
+            )
+            return vector_store
+        except Exception:
+            pass
+    return InMemoryVectorStore.from_documents(documents, embeddings)
 
 
 def get_vectorstore(embeddings):
-    try:
-        vector_store = RedisVectorStore(
-            embeddings=embeddings,
-            redis_url=os.getenv("REDIS_URL"),
-            index_name="pdf_rag"
-        )
-        vector_store.similarity_search("test", k=1)
-        return vector_store
-    except Exception:
-        docs = get_fallback_documents()
-        return InMemoryVectorStore.from_documents(docs, embeddings)
+    if HAS_REDIS and os.getenv("REDIS_URL"):
+        try:
+            vector_store = RedisVectorStore(
+                embeddings=embeddings,
+                redis_url=os.getenv("REDIS_URL"),
+                index_name="pdf_rag"
+            )
+            vector_store.similarity_search("test", k=1)
+            return vector_store
+        except Exception:
+            pass
+    docs = get_fallback_documents()
+    return InMemoryVectorStore.from_documents(docs, embeddings)
+
